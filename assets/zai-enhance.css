@@ -1,0 +1,160 @@
+/* ============================================================
+   zai-enhance.css — gaya untuk loading screen & kado premium
+   Dipisah dari HTML sesuai permintaan.
+   ============================================================ */
+
+/* ---------------- LOADING SCREEN ---------------- */
+#zai-load{
+  position:fixed;inset:0;z-index:100000;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:40px;
+  background:radial-gradient(130% 130% at 50% 18%,#0f2352 0%,#091438 46%,#04081d 100%);
+  font-family:"Cormorant Garamond",ui-serif,Georgia,"Times New Roman",serif;
+  transition:opacity .8s ease;
+}
+#zai-load.hide{opacity:0;pointer-events:none;}
+
+/* saat loading selesai & love menyembur: teks + bar memudar, matrix meredup */
+#zai-load.zl-spray .zl-title,
+#zai-load.zl-spray .zl-track,
+#zai-load.zl-spray .zl-halo{opacity:0;transition:opacity .5s ease;}
+#zai-load.zl-spray .zl-matrix{opacity:0;transition:opacity .6s ease;}
+
+/* hujan matrix love */
+#zai-load .zl-matrix{position:absolute;inset:0;z-index:1;pointer-events:none;
+  opacity:.9;mix-blend-mode:screen;}
+
+
+#zai-load .zl-stars{position:absolute;inset:0;overflow:hidden;pointer-events:none;}
+#zai-load .zl-star{position:absolute;border-radius:50%;background:#dbe7ff;
+  animation:zl-tw 3s ease-in-out infinite;}
+@keyframes zl-tw{0%,100%{opacity:.12;transform:scale(.6)}50%{opacity:.9;transform:scale(1.2)}}
+
+/* glow halus di belakang teks */
+#zai-load .zl-halo{position:absolute;top:38%;width:min(80vw,560px);height:220px;
+  background:radial-gradient(circle,rgba(96,150,240,.28),transparent 70%);filter:blur(14px);
+  pointer-events:none;}
+
+#zai-load .zl-title{
+  position:relative;z-index:2;font-size:clamp(30px,7vw,60px);font-style:italic;font-weight:500;
+  letter-spacing:.02em;text-align:center;padding:0 22px;min-height:1.2em;
+  background:linear-gradient(100deg,#8db6ff 8%,#ffffff 32%,#6faeee 50%,#ffffff 68%,#8db6ff 92%);
+  background-size:220% auto;-webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;color:#eaf2ff;
+  animation:zl-shimmer 3.6s linear infinite;
+  filter:drop-shadow(0 2px 18px rgba(96,150,240,.35));
+}
+@keyframes zl-shimmer{to{background-position:-220% center}}
+#zai-load .zl-caret{-webkit-text-fill-color:#bcd6ff;color:#bcd6ff;font-style:normal;
+  animation:zl-blink 1s steps(1) infinite;}
+@keyframes zl-blink{50%{opacity:0}}
+
+#zai-load .zl-track{position:relative;z-index:2;width:min(74vw,400px);height:12px;border-radius:999px;
+  background:rgba(255,255,255,.07);
+  box-shadow:inset 0 1px 3px rgba(0,0,0,.55),0 0 0 1px rgba(255,255,255,.06);}
+#zai-load .zl-fill{position:absolute;left:0;top:0;height:100%;width:0;border-radius:999px;
+  background:linear-gradient(90deg,#2f6fd0,#5b9ae8,#9fc6f5);
+  box-shadow:0 0 18px rgba(96,165,250,.85);transition:width .12s linear;}
+#zai-load .zl-heart{position:absolute;top:50%;left:0;width:30px;height:30px;
+  transform:translate(-50%,-50%);transition:left .12s linear;
+  filter:drop-shadow(0 0 9px rgba(150,190,255,.95));}
+#zai-load .zl-heart svg{width:100%;height:100%;animation:zl-beat 1s ease-in-out infinite;}
+@keyframes zl-beat{0%,100%{transform:scale(1)}16%{transform:scale(1.3)}32%{transform:scale(1)}
+  48%{transform:scale(1.16)}}
+
+/* ---------------- KADO PREMIUM ---------------- */
+.gift-enter.zai-lux .zai-orig{display:none!important;}   /* sembunyikan kotak bawaan */
+
+.zg-stage{position:relative;width:280px;height:300px;display:flex;align-items:center;
+  justify-content:center;}
+.zg-glow{position:absolute;top:44%;left:50%;width:270px;height:270px;transform:translate(-50%,-50%);
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(96,165,250,.5),rgba(96,165,250,0) 62%);
+  filter:blur(8px);animation:zg-glow 3.6s ease-in-out infinite;}
+@keyframes zg-glow{0%,100%{opacity:.5;transform:translate(-50%,-50%) scale(.92)}
+  50%{opacity:.95;transform:translate(-50%,-50%) scale(1.08)}}
+
+/* bayangan lantai */
+.zg-floor{position:absolute;bottom:38px;left:50%;width:170px;height:26px;transform:translateX(-50%);
+  background:radial-gradient(ellipse at center,rgba(4,12,40,.6),transparent 70%);
+  filter:blur(3px);animation:zg-floor 3.4s ease-in-out infinite;}
+@keyframes zg-floor{0%,100%{transform:translateX(-50%) scale(1);opacity:.55}
+  50%{transform:translateX(-50%) scale(.86);opacity:.35}}
+
+.zg-box{position:relative;width:158px;height:170px;animation:zg-float 3.4s ease-in-out infinite;}
+@keyframes zg-float{0%,100%{transform:translateY(0) rotate(-1.2deg)}
+  50%{transform:translateY(-14px) rotate(1.2deg)}}
+
+/* badan kotak */
+.zg-body{position:absolute;left:8px;right:8px;bottom:0;height:118px;border-radius:12px;overflow:hidden;
+  background:linear-gradient(155deg,#3f8bec 0%,#2166cf 46%,#0d47a1 100%);
+  box-shadow:0 24px 44px -10px rgba(6,26,66,.8),inset 0 2px 7px rgba(255,255,255,.32),
+    inset 0 -14px 26px rgba(0,18,58,.55);}
+.zg-body-shine{position:absolute;top:0;left:-70%;width:48%;height:100%;
+  background:linear-gradient(115deg,transparent,rgba(255,255,255,.5),transparent);
+  transform:skewX(-16deg);animation:zg-sheen 4.2s ease-in-out infinite;}
+@keyframes zg-sheen{0%,58%{left:-70%}100%{left:160%}}
+
+/* tutup */
+.zg-lid{position:absolute;left:0;right:0;top:34px;height:40px;border-radius:11px;overflow:hidden;
+  background:linear-gradient(155deg,#5a9ef2,#2f7fe0);
+  box-shadow:0 8px 16px rgba(6,26,66,.55),inset 0 2px 6px rgba(255,255,255,.4);z-index:3;}
+.zg-lid-shine{position:absolute;top:0;left:-70%;width:48%;height:100%;
+  background:linear-gradient(115deg,transparent,rgba(255,255,255,.55),transparent);
+  transform:skewX(-16deg);animation:zg-sheen 4.2s ease-in-out infinite .2s;}
+
+/* pita emas vertikal */
+.zg-rib{position:absolute;left:50%;top:34px;width:26px;height:136px;transform:translateX(-50%);z-index:4;
+  background:linear-gradient(90deg,#b9832a 0%,#ffe082 42%,#fff7db 52%,#e0ad3a 78%,#b9832a 100%);
+  box-shadow:0 0 8px rgba(0,0,0,.15);}
+.zg-rib:after{content:"";position:absolute;left:50%;top:0;width:2px;height:100%;transform:translateX(-50%);
+  background:rgba(255,255,255,.45);}
+
+/* bow SVG */
+.zg-bow{position:absolute;left:50%;top:2px;width:118px;height:74px;transform:translateX(-50%);z-index:6;
+  filter:drop-shadow(0 6px 8px rgba(0,0,0,.35));}
+
+/* tag hati menggantung */
+.zg-tag{position:absolute;right:2px;top:78px;z-index:5;transform-origin:top center;
+  animation:zg-swing 3.6s ease-in-out infinite;}
+@keyframes zg-swing{0%,100%{transform:rotate(-9deg)}50%{transform:rotate(9deg)}}
+.zg-tag svg{width:28px;height:28px;filter:drop-shadow(0 3px 4px rgba(0,0,0,.4));}
+
+/* sparkles */
+.zg-spark{position:absolute;color:#fff;opacity:0;pointer-events:none;
+  text-shadow:0 0 8px #bcdcff;animation:zg-spark 3s ease-in-out infinite;}
+@keyframes zg-spark{0%,100%{opacity:0;transform:scale(.3) rotate(0)}
+  50%{opacity:1;transform:scale(1) rotate(45deg)}}
+
+/* ---- animasi kotak TERBUKA saat diklik ---- */
+.zg-stage.zg-open .zg-box{animation:zg-openpop .55s cubic-bezier(.34,1.56,.64,1) forwards;}
+@keyframes zg-openpop{0%{transform:translateY(0) scale(1)}
+  40%{transform:translateY(-10px) scale(1.06)}100%{transform:translateY(6px) scale(1.02)}}
+.zg-stage.zg-open .zg-lid{animation:zg-lidfly .6s ease-in forwards;}
+@keyframes zg-lidfly{0%{transform:translateY(0) rotate(0)}
+  100%{transform:translateY(-130px) rotate(-24deg);opacity:0}}
+.zg-stage.zg-open .zg-bow{animation:zg-bowfly .6s ease-in forwards;}
+@keyframes zg-bowfly{0%{transform:translateX(-50%) translateY(0) rotate(0);opacity:1}
+  100%{transform:translateX(-50%) translateY(-165px) rotate(20deg);opacity:0}}
+.zg-stage.zg-open .zg-rib{animation:zg-ribfade .45s ease forwards;}
+@keyframes zg-ribfade{to{opacity:.25}}
+.zg-stage.zg-open .zg-tag{animation:zg-tagfly .55s ease-in forwards;}
+@keyframes zg-tagfly{to{transform:translateY(-40px) rotate(30deg);opacity:0}}
+.zg-stage.zg-open .zg-glow{animation:zg-burst .6s ease-out forwards;}
+@keyframes zg-burst{0%{opacity:.6;transform:translate(-50%,-50%) scale(1)}
+  100%{opacity:0;transform:translate(-50%,-50%) scale(1.9)}}
+.zg-stage.zg-open .zg-hint{animation:zg-hintout .4s ease forwards;}
+@keyframes zg-hintout{to{opacity:0;transform:translateY(6px)}}
+
+.zg-hint{margin-top:14px;font-family:"Cormorant Garamond",ui-serif,Georgia,serif;
+  font-style:italic;letter-spacing:.14em;font-size:19px;color:#ffe6a3;
+  text-shadow:0 0 16px rgba(255,224,130,.55);text-align:center;
+  animation:zg-hint 2s ease-in-out infinite;}
+@keyframes zg-hint{0%,100%{opacity:.55}50%{opacity:1}}
+
+@media (prefers-reduced-motion: reduce){
+  #zai-load .zl-title,.zg-box,.zg-glow,.zg-floor,.zg-body-shine,.zg-lid-shine,
+  .zg-tag,.zg-spark,.zg-hint,#zai-load .zl-heart svg{animation:none!important;}
+  /* tetap tampilkan keadaan terbuka tanpa gerak */
+  .zg-stage.zg-open .zg-lid,.zg-stage.zg-open .zg-bow,
+  .zg-stage.zg-open .zg-tag{opacity:0!important;animation:none!important;}
+}
