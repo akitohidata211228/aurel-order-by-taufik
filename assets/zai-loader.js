@@ -173,7 +173,7 @@
     const stage=box.querySelector('.zg-stage');
     if(stage) stage.classList.add('zg-open');    // animasi tutup terbuka
     const gimg=box.querySelector('.zg-img');
-    if(gimg) gimg.src='kotak buka.png';          // ganti ke gambar kotak terbuka
+    if(gimg) gimg.src='kotak-buka.png';          // ganti ke gambar kotak terbuka
     let origin={x:innerWidth/2,y:innerHeight/2};
     try{ const r=(stage||box).getBoundingClientRect(); origin={x:r.left+r.width/2,y:r.top+r.height*0.35}; }catch(_){}
     // beri jeda kecil supaya animasi buka terlihat sebelum bunga menyembur
@@ -223,7 +223,7 @@
         <span class="zg-spark" style="right:8%;top:26%;font-size:12px;animation-delay:.9s">✦</span>
         <span class="zg-spark" style="left:20%;bottom:26%;font-size:14px;animation-delay:1.6s">✦</span>
         <span class="zg-spark" style="right:16%;bottom:30%;font-size:10px;animation-delay:2.3s">✦</span>
-        <img class="zg-img" src="kotak tutup.png" alt="kado" draggable="false">
+        <img class="zg-img" src="kotak-tutup.png" alt="kado" draggable="false">
       </div>
       <div class="zg-hint">buka kotaknya, maka…</div>`;
     btn.appendChild(wrap);

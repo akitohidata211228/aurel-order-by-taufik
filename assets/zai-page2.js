@@ -2,8 +2,8 @@
    zai-page2.js — Setelah semua hadiah terkumpul:
    1) Animasi AWAN (canvas, digambar sendiri) masuk dari KIRI & KANAN
       menutup layar, lalu menyingkir/menghilang.
-   2) Muncul PAGE 2 (papan kayu): back2 hp.png utk mobile/android,
-      back2 deks.png utk desktop. Judul di atas papan.
+   2) Muncul PAGE 2 (papan kayu): back2-hp.png utk mobile/android,
+      back2-deks.png utk desktop. Judul di atas papan.
    3) Tugas: menata potongan CINTA (digambar via canvas) ke bingkai
       hati putus-putus. 2 setengah-lingkaran + 1 wajik = 1 hati utuh.
    ============================================================ */
@@ -16,10 +16,10 @@
      asm  = papan kayu ATAS  → tempat menyusun HATI
      tray = papan kayu BAWAH → rak tempat potongan menunggu. */
   const LAYOUTS = {
-    mobile : { img:'back2 hp.png',
+    mobile : { img:'back2-hp.png',
                asm :{xf:0.498, yf:0.383, wf:0.685, hf:0.362},
                tray:{xf:0.498, yf:0.698, wf:0.674, hf:0.122} },
-    desktop: { img:'back2 deks.png',
+    desktop: { img:'back2-deks.png',
                asm :{xf:0.496, yf:0.396, wf:0.376, hf:0.430},
                tray:{xf:0.500, yf:0.757, wf:0.370, hf:0.094} }
   };
@@ -142,7 +142,7 @@
   /* =========================================================
      BAGIAN 2 — PAPAN (page 2) + GAME MENATA LOVE
      ========================================================= */
-  const NAT={ 'back2 hp.png':[852,1846], 'back2 deks.png':[1536,1024] };
+  const NAT={ 'back2-hp.png':[852,1846], 'back2-deks.png':[1536,1024] };
   let boardEl=null, cv=null, ctx=null, LAY=null, pieces=[], H0={}, dragging=null;
   let dpr=1, W=0, Hh=0;
 
