@@ -59,7 +59,7 @@
 
   /* ---------- sprite MODE 'mixed' (foto asli): biru, kuning, coklat, hati ----------
      dipakai untuk animasi FINALE full-layar (semua elemen KECUALI keranjang). */
-  const MIXED_SRC=['biru.png','kuning.png','coklat.webp','love.png'];
+  const MIXED_SRC=['biru.webp','kuning.webp','coklat.webp','love.webp'];
   const MIXED_COUNT=MIXED_SRC.length;
   let mixedSprites=null;
   function buildMixedSprites(){ if(mixedSprites)return mixedSprites;

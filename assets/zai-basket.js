@@ -9,10 +9,10 @@
   if (window.ZaiBasket) return;
 
   const GIFTS = [
-    {id:'lily',   src:'biru.png',    label:'Bunga Biru'},
-    {id:'rose',   src:'pink.png',    label:'Mawar Pink'},
-    {id:'plum',   src:'kuning.png',  label:'Bunga Kuning'},
-    {id:'love',   src:'love.png',    label:'Cinta'},
+    {id:'lily',   src:'biru.webp',    label:'Bunga Biru'},
+    {id:'rose',   src:'pink.webp',    label:'Mawar Pink'},
+    {id:'plum',   src:'kuning.webp',  label:'Bunga Kuning'},
+    {id:'love',   src:'love.webp',    label:'Cinta'},
     {id:'coklat', src:'coklat.webp', label:'Coklat'}
   ];
   const TOTAL = GIFTS.length;
@@ -32,7 +32,7 @@
     s.textContent=`
     #zai-basket{position:fixed;inset:0;z-index:99990;overflow:hidden;
       font-family:"Baloo 2",ui-rounded,"Segoe UI",system-ui,sans-serif;
-      background:#bfe39a url("dekstop.png") center/cover no-repeat;
+      background:#bfe39a url("dekstop.webp") center/cover no-repeat;
       opacity:0;transition:opacity .6s ease;
       display:flex;flex-direction:column;align-items:center;}
     #zai-basket.show{opacity:1;}
@@ -163,7 +163,7 @@
     @keyframes zb-tw{0%,100%{opacity:.25;transform:scale(.7)}50%{opacity:1;transform:scale(1.15)}}
 
     @media (max-width:768px){
-      #zai-basket{background-image:url("handphone.png");}
+      #zai-basket{background-image:url("handphone.webp");}
       /* mode mobile: keranjang jangan kebesaran, geser kiri agar sejajar & berdampingan dgn kucing */
       #zai-basket .zb-basket-wrap{width:min(46vw,210px);right:11vw;}
       #zai-basket .zb-cat{left:calc(50% - 11vw + min(23vw,105px) + 6px);right:auto;
@@ -206,7 +206,7 @@
           <span class="zb-cs" style="right:20px;top:22px;font-size:13px;animation-delay:.6s">✦</span>
           <span class="zb-cs" style="left:26px;bottom:60px;font-size:14px;animation-delay:1.1s">✦</span>
           <span class="zb-cs" style="right:24px;bottom:52px;font-size:16px;animation-delay:1.5s">✦</span>
-          <img class="zb-hasil" src="hasil-nobg.png" alt="hasil buket" draggable="false">
+          <img class="zb-hasil" src="hasil-nobg.webp" alt="hasil buket" draggable="false">
           <p class="zb-yey">yeyy kamu sudah mengumpulkan nya</p>
           <button class="zb-ok" type="button">iya</button>
         </div>

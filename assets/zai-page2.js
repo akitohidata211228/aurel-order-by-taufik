@@ -2,8 +2,8 @@
    zai-page2.js — Setelah semua hadiah terkumpul:
    1) Animasi AWAN (canvas, digambar sendiri) masuk dari KIRI & KANAN
       menutup layar, lalu menyingkir/menghilang.
-   2) Muncul PAGE 2 (papan kayu): back2-hp.png utk mobile/android,
-      back2-deks.png utk desktop. Judul di atas papan.
+   2) Muncul PAGE 2 (papan kayu): back2-hp.webp utk mobile/android,
+      back2-deks.webp utk desktop. Judul di atas papan.
    3) Tugas: menata potongan CINTA (digambar via canvas) ke bingkai
       hati putus-putus. 2 setengah-lingkaran + 1 wajik = 1 hati utuh.
    ============================================================ */
@@ -16,10 +16,10 @@
      asm  = papan kayu ATAS  → tempat menyusun HATI
      tray = papan kayu BAWAH → rak tempat potongan menunggu. */
   const LAYOUTS = {
-    mobile : { img:'back2-hp.png',
+    mobile : { img:'back2-hp.webp',
                asm :{xf:0.498, yf:0.383, wf:0.685, hf:0.362},
                tray:{xf:0.498, yf:0.698, wf:0.674, hf:0.122} },
-    desktop: { img:'back2-deks.png',
+    desktop: { img:'back2-deks.webp',
                asm :{xf:0.496, yf:0.396, wf:0.376, hf:0.430},
                tray:{xf:0.500, yf:0.757, wf:0.370, hf:0.094} }
   };
@@ -142,7 +142,7 @@
   /* =========================================================
      BAGIAN 2 — PAPAN (page 2) + GAME MENATA LOVE
      ========================================================= */
-  const NAT={ 'back2-hp.png':[852,1846], 'back2-deks.png':[1536,1024] };
+  const NAT={ 'back2-hp.webp':[852,1846], 'back2-deks.webp':[1536,1024] };
   let boardEl=null, cv=null, ctx=null, LAY=null, pieces=[], H0={}, dragging=null;
   let dpr=1, W=0, Hh=0;
 
@@ -438,16 +438,50 @@
   }
 
   let goingGalaxy=false;
+  /* pesan lembut saat awan hitam menutup: minta dia mengetuk planet nanti */
+  function showGalaxyHint(){
+    if(document.getElementById('zai-galaxy-hint')) return;
+    const st=document.createElement('style'); st.id='zai-galaxy-hint-css';
+    st.textContent=`
+      #zai-galaxy-hint{position:fixed;inset:0;z-index:99999;display:flex;
+        flex-direction:column;align-items:center;justify-content:center;
+        text-align:center;pointer-events:none;padding:24px;
+        font-family:"Baloo 2",ui-rounded,"Segoe UI",system-ui,sans-serif;
+        opacity:0;transition:opacity .8s ease;}
+      #zai-galaxy-hint.on{opacity:1;}
+      #zai-galaxy-hint .zgh-emoji{font-size:clamp(34px,9vw,58px);
+        filter:drop-shadow(0 0 18px rgba(180,150,255,.7));
+        animation:zgh-float 2.6s ease-in-out infinite;}
+      #zai-galaxy-hint .zgh-main{margin-top:14px;color:#fff;font-weight:800;
+        font-size:clamp(22px,6vw,38px);line-height:1.2;
+        text-shadow:0 0 22px rgba(255,120,190,.75),0 2px 10px rgba(0,0,0,.5);}
+      #zai-galaxy-hint .zgh-sub{margin-top:10px;color:#ffd9ec;font-weight:600;
+        font-size:clamp(14px,3.8vw,20px);opacity:.92;
+        text-shadow:0 2px 10px rgba(0,0,0,.5);}
+      @keyframes zgh-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+      @media (prefers-reduced-motion:reduce){
+        #zai-galaxy-hint{transition:none;}#zai-galaxy-hint .zgh-emoji{animation:none;}}`;
+    document.head.appendChild(st);
+    const el=document.createElement('div'); el.id='zai-galaxy-hint';
+    el.innerHTML=`<div class="zgh-emoji">🪐✨</div>
+      <div class="zgh-main">Ketuk planetnya ya 💖</div>
+      <div class="zgh-sub">ada kejutan menunggumu di sana ✨</div>`;
+    document.body.appendChild(el);
+    requestAnimationFrame(()=>requestAnimationFrame(()=>el.classList.add('on')));
+  }
   function goToGalaxy(){
     if(goingGalaxy) return; goingGalaxy=true;
     playClouds(function(){                 // saat layar TERTUTUP penuh
-      location.href='galaxy/index.html';
+      showGalaxyHint();                    // pesan: ketuk planetnya
+      setTimeout(function(){ location.href='galaxy'; }, 2000);  // URL bersih (tanpa .html)
     }, null, {stayCovered:true});          // awan gelap menutup lalu DIAM
   }
 
   window.ZaiPage2={
     start(){ if(started)return; started=true;
-      playClouds(mountBoard, revealBoard);
+      // langsung tampil (tanpa awan hitam) → papan fade-in halus
+      mountBoard();
+      requestAnimationFrame(()=>requestAnimationFrame(revealBoard));
     }
   };
 })();

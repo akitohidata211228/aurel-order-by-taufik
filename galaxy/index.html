@@ -2,6 +2,18 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Galaxy with Zoom Effect</title>
+  <script>
+    /* Reload di halaman galaxy → kembali ke halaman awal (sebelum kado).
+       Jalan paling awal, sebelum three.js/CSS berat dimuat. */
+    (function(){
+      try{
+        var nav = performance.getEntriesByType && performance.getEntriesByType('navigation')[0];
+        var isReload = nav ? nav.type === 'reload'
+                           : (performance.navigation && performance.navigation.type === 1);
+        if(isReload){ location.replace('/'); }
+      }catch(_){}
+    })();
+  </script>
   <link rel="stylesheet" href="css/style.css">
   <script type="importmap">
     {

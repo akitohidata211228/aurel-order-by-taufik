@@ -81,11 +81,11 @@ const galaxyParameters = {
 
 const textureLoader = new THREE.TextureLoader();
 
-/* Gambar planet-galaksi: coba image1.png .. image10.png, pakai yang ADA saja.
-   Tinggal taruh image3.png, image4.png, dst di folder galaxy → otomatis kepakai. */
+/* Gambar planet-galaksi: coba image1.webp .. image10.webp, pakai yang ADA saja.
+   Tinggal taruh image3.webp, image4.webp, dst di folder galaxy → otomatis kepakai. */
 const MAX_IMAGES = 10;
 function probeImages() {
-  const candidates = Array.from({ length: MAX_IMAGES }, (_, i) => `image${i + 1}.png`);
+  const candidates = Array.from({ length: MAX_IMAGES }, (_, i) => `image${i + 1}.webp`);
   return Promise.all(candidates.map(src => new Promise(resolve => {
     const im = new window.Image();
     im.onload = () => resolve(src);
@@ -1199,8 +1199,8 @@ function requestFullScreen() {
 }
 
 /* =========================================================
-   SURAT — klik planet (setelah intro) → amplop tertutup (tutup.png),
-   klik amplop → terbuka (buka.png) → isi surat + tombol silang (X).
+   SURAT — klik planet (setelah intro) → amplop tertutup (tutup.webp),
+   klik amplop → terbuka (buka.webp) → isi surat + tombol silang (X).
    ========================================================= */
 const SURAT_TEXT = `Untuk Zai tersayang,
 
@@ -1251,7 +1251,7 @@ function buildSurat() {
 
   const ov = document.createElement('div'); ov.id = 'surat-overlay';
   ov.innerHTML =
-    `<img class="su-env" src="tutup.png" alt="surat" draggable="false">
+    `<img class="su-env" src="tutup.webp" alt="surat" draggable="false">
      <div class="su-hint">ketuk amplop untuk membuka ✨</div>`;
   document.body.appendChild(ov);
 
@@ -1272,11 +1272,11 @@ function buildSurat() {
     }, 380);
   }
 
-  // klik amplop tertutup → tampilkan buka.png dulu, lalu isi surat
+  // klik amplop tertutup → tampilkan buka.webp dulu, lalu isi surat
   env.addEventListener('click', () => {
     if (env.dataset.opened) return;
     env.dataset.opened = '1';
-    env.src = 'buka.png';
+    env.src = 'buka.webp';
     hint.textContent = '💌';
     setTimeout(showLetter, 650);
   });
@@ -1297,7 +1297,7 @@ function closeSurat() {
   setTimeout(() => {
     const card = s.ov.querySelector('.su-card'); if (card) card.remove();
     s.env.style.display = ''; s.env.style.opacity = ''; s.env.style.transform = '';
-    s.env.src = 'tutup.png'; delete s.env.dataset.opened;
+    s.env.src = 'tutup.webp'; delete s.env.dataset.opened;
     s.hint.style.display = ''; s.hint.textContent = 'ketuk amplop untuk membuka ✨';
   }, 420);
 }
