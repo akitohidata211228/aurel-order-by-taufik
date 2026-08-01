@@ -315,7 +315,8 @@
       moved=0;
       cell.classList.remove('wiggle');
       ghost=document.createElement('img');
-      ghost.className='zb-ghost'; ghost.src=g.src;
+      ghost.className='zb-ghost';
+      if(window.ZaiAsset) ZaiAsset.img(ghost, g.src); else ghost.src=g.src;
       ghost.style.transform=`translate(${p.x}px,${p.y}px) scale(1.15)`;
       document.body.appendChild(ghost);
       cell.classList.add('lifting');
@@ -363,7 +364,9 @@
     cell.classList.add('taken');
     // tambahkan ke buket di keranjang
     const bq=overlay.querySelector('.zb-bouquet');
-    const im=document.createElement('img'); im.src=g.src; bq.appendChild(im);
+    const im=document.createElement('img');
+    if(window.ZaiAsset) ZaiAsset.img(im, g.src); else im.src=g.src;
+    bq.appendChild(im);
     collected++;
     overlay.querySelector('.zb-num').textContent=String(collected);
     // EFEK saat item masuk keranjang: dentuman keranjang + cincin + percikan hati
