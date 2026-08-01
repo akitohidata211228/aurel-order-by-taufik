@@ -132,7 +132,7 @@
     const caret=o.querySelector('.zl-caret');
     const fill=o.querySelector('.zl-fill');
     const heart=o.querySelector('.zl-heart');
-    const TEXT='You look so beautiful';
+    const TEXT='Happy girlfriend';
     let i=0;
     // ketik satu huruf demi satu huruf; progress bar sinkron
     (function type(){
@@ -191,17 +191,22 @@
   /* -------------------- Ganti background (dekstop / handphone) -------------------- */
   function swapBackground(){
     if(document.getElementById('zai-final-bg'))return;
+    // nama file background dari config terenkripsi (AES) bila sudah siap;
+    // fallback plaintext supaya situs tetap jalan walau Web Crypto tak ada.
+    const G = window.__zg;
+    const bgD = (G && G.cget) ? G.cget('bgDesktop','dekstop.webp') : 'dekstop.webp';
+    const bgM = (G && G.cget) ? G.cget('bgMobile','handphone.webp') : 'handphone.webp';
     const st=document.createElement('style'); st.id='zai-final-bg';
     st.textContent=
       '#root .bg-\\[\\#0d0015\\],'+
       'body.zai-final .bg-\\[\\#0d0015\\]{'+
       'background-color:transparent!important;'+
-      'background-image:url("dekstop.webp")!important;'+
+      'background-image:url("'+bgD+'")!important;'+
       'background-size:cover!important;background-position:center!important;'+
       'background-attachment:fixed!important;background-repeat:no-repeat!important;}'+
       '@media (max-width:768px){'+
       '#root .bg-\\[\\#0d0015\\],body.zai-final .bg-\\[\\#0d0015\\]{'+
-      'background-image:url("handphone.webp")!important;background-attachment:scroll!important;}}';
+      'background-image:url("'+bgM+'")!important;background-attachment:scroll!important;}}';
     document.head.appendChild(st);
     document.body.classList.add('zai-final');
     // tampilkan mini-game keranjang di halaman background bunga
