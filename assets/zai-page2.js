@@ -464,8 +464,8 @@
     document.head.appendChild(st);
     const el=document.createElement('div'); el.id='zai-galaxy-hint';
     el.innerHTML=`<div class="zgh-emoji">🪐✨</div>
-      <div class="zgh-main">Ketuk planetnya ya 💖</div>
-      <div class="zgh-sub">ada kejutan menunggumu di sana ✨</div>`;
+      <div class="zgh-main">Klik planet setelah animasi selesai ✨</div>
+      <div class="zgh-sub">ada sesuatu untukmu di sana 💖</div>`;
     document.body.appendChild(el);
     requestAnimationFrame(()=>requestAnimationFrame(()=>el.classList.add('on')));
   }

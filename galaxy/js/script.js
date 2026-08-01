@@ -81,17 +81,29 @@ const galaxyParameters = {
 
 const textureLoader = new THREE.TextureLoader();
 
-/* Gambar planet-galaksi: coba image1.webp .. image10.webp, pakai yang ADA saja.
-   Tinggal taruh image3.webp, image4.webp, dst di folder galaxy → otomatis kepakai. */
-const MAX_IMAGES = 10;
+/* Gambar planet-galaksi: coba image1..image30 dengan ekstensi apa saja
+   (webp/png/jpg/jpeg). Cukup taruh file "imageN.<ext>" di folder galaxy →
+   otomatis kepakai. Tidak perlu ubah kode saat menambah foto. */
+const MAX_IMAGES = 30;
+const IMG_EXTS = ['webp', 'png', 'jpg', 'jpeg'];
 function probeImages() {
-  const candidates = Array.from({ length: MAX_IMAGES }, (_, i) => `image${i + 1}.webp`);
-  return Promise.all(candidates.map(src => new Promise(resolve => {
+  // untuk tiap nomor, cari file pertama yang ADA di antara ekstensi di atas.
+  const nums = Array.from({ length: MAX_IMAGES }, (_, i) => i + 1);
+  const tryOne = (src) => new Promise(resolve => {
     const im = new window.Image();
     im.onload = () => resolve(src);
     im.onerror = () => resolve(null);
     im.src = src;
-  }))).then(list => list.filter(Boolean));
+  });
+  const findForNum = async (n) => {
+    for (const ext of IMG_EXTS) {
+      const hit = await tryOne(`image${n}.${ext}`);
+      if (hit) return hit;
+    }
+    return null;
+  };
+  // jaga urutan (image1, image2, ...) & buang nomor yang tak ada file-nya
+  return Promise.all(nums.map(findForNum)).then(list => list.filter(Boolean));
 }
 
 const positions = new Float32Array(galaxyParameters.count * 3);
@@ -790,20 +802,84 @@ function animatePlanetSystem() {
 
 
 let galaxyAudio = null;
+let galaxyAudioReady = false;
+
+/* Cari file lagu lokal otomatis (seperti foto): cukup taruh salah satu dari
+   lagu/song/music/galaxy dengan ekstensi mp3/ogg/m4a/wav di folder galaxy.
+   Catatan: URL YouTube TIDAK bisa diputar lewat <audio> — harus file audio. */
+function findAudioSrc() {
+  const names = ['lagu', 'song', 'music', 'galaxy'];
+  const exts  = ['mp3', 'ogg', 'm4a', 'wav'];
+  const MIME  = { mp3: 'audio/mpeg', ogg: 'audio/ogg', m4a: 'audio/mp4', wav: 'audio/wav' };
+  const probe = document.createElement('audio');
+  const tryOne = (src) => new Promise(resolve => {
+    const a = new Audio();
+    let done = false;
+    const ok = () => { if (!done) { done = true; resolve(src); } };
+    const no = () => { if (!done) { done = true; resolve(null); } };
+    a.addEventListener('canplaythrough', ok, { once: true });
+    a.addEventListener('loadedmetadata', ok, { once: true });
+    a.addEventListener('error', no, { once: true });
+    a.preload = 'auto';
+    a.src = src;
+    setTimeout(no, 4000); // jangan menggantung bila file tak ada
+  });
+  const scan = async () => {
+    for (const n of names) for (const e of exts) {
+      // lewati hanya bila browser jelas TIDAK bisa memutar format ini
+      if (probe.canPlayType && probe.canPlayType(MIME[e]) === '') continue;
+      const hit = await tryOne(`${n}.${e}`);
+      if (hit) return hit;
+    }
+    return null;
+  };
+  return scan();
+}
 
 function preloadGalaxyAudio() {
-  const audioSources = [
-   "https://www.youtube.com/watch?v=d4OMqGKBl6E&list=RDd4OMqGKBl6E&start_radio=1&ab_channel=ARS"
-  ];
+  findAudioSrc().then(src => {
+    if (!src) { console.warn('Tidak ada file lagu lokal (mis. lagu.mp3) di folder galaxy.'); return; }
+    galaxyAudio = new Audio(src);
+    galaxyAudio.loop = true;
+    galaxyAudio.volume = 1.0;
+    galaxyAudio.preload = 'auto';
+    galaxyAudioReady = true;
+    // Coba putar OTOMATIS begitu galaxy terbuka.
+    // - Browser tanpa aturan izin → langsung berbunyi (tanpa minta izin).
+    // - Browser dgn kebijakan autoplay → play() ditolak; kita diam saja,
+    //   lalu putar pada interaksi pertama user (mis. klik planet). Galaxy
+    //   tetap terbuka tanpa suara sampai user berinteraksi.
+    tryAutoplay();
+  });
+}
 
-  const randomIndex = Math.floor(Math.random() * audioSources.length);
-  const selectedSrc = audioSources[randomIndex];
+function tryAutoplay() {
+  if (!galaxyAudio) return;
+  const p = galaxyAudio.play();
+  if (p && typeof p.then === 'function') {
+    p.then(() => {
+      // autoplay diizinkan → tidak perlu apa-apa lagi
+    }).catch(() => {
+      // diblokir kebijakan browser → tunggu interaksi pertama, lalu putar
+      armGestureUnlock();
+    });
+  }
+}
 
-  galaxyAudio = new Audio(selectedSrc);
-  galaxyAudio.loop = true;
-  galaxyAudio.volume = 1.0;
-
-  galaxyAudio.preload = "auto";
+let gestureArmed = false;
+function armGestureUnlock() {
+  if (gestureArmed) return; gestureArmed = true;
+  const unlock = () => {
+    if (galaxyAudio) galaxyAudio.play().catch(() => {});
+    window.removeEventListener('pointerdown', unlock);
+    window.removeEventListener('touchstart', unlock);
+    window.removeEventListener('keydown', unlock);
+    window.removeEventListener('click', unlock);
+  };
+  window.addEventListener('pointerdown', unlock, { once: true });
+  window.addEventListener('touchstart',  unlock, { once: true });
+  window.addEventListener('keydown',     unlock, { once: true });
+  window.addEventListener('click',       unlock, { once: true });
 }
 
 function playGalaxyAudio() {
@@ -1072,7 +1148,7 @@ function createHintText() {
   canvas.width = canvas.height = canvasSize;
   const context = canvas.getContext('2d');
   const fontSize = 50;
-  const text = 'Tap the planet 💖';
+  const text = 'Klik planet 💖';
   context.font = `bold ${fontSize}px Arial, sans-serif`;
   context.textAlign = 'center';
   context.textBaseline = 'middle';
