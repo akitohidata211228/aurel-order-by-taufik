@@ -32,7 +32,7 @@
     s.textContent=`
     #zai-basket{position:fixed;inset:0;z-index:99990;overflow:hidden;
       font-family:"Baloo 2",ui-rounded,"Segoe UI",system-ui,sans-serif;
-      background:#bfe39a url("dekstop.webp") center/cover no-repeat;
+      background:#bfe39a center/cover no-repeat;
       opacity:0;transition:opacity .6s ease;
       display:flex;flex-direction:column;align-items:center;}
     #zai-basket.show{opacity:1;}
@@ -163,7 +163,6 @@
     @keyframes zb-tw{0%,100%{opacity:.25;transform:scale(.7)}50%{opacity:1;transform:scale(1.15)}}
 
     @media (max-width:768px){
-      #zai-basket{background-image:url("handphone.webp");}
       /* mode mobile: keranjang jangan kebesaran, geser kiri agar sejajar & berdampingan dgn kucing */
       #zai-basket .zb-basket-wrap{width:min(46vw,210px);right:11vw;}
       #zai-basket .zb-cat{left:calc(50% - 11vw + min(23vw,105px) + 6px);right:auto;
@@ -193,7 +192,7 @@
       <div class="zb-stage">
         <div class="zb-basket-wrap">
           <div class="zb-bouquet"></div>
-          <img class="zb-basket" src="keranjang.webp" alt="keranjang" draggable="false">
+          <img class="zb-basket" src="keranjang.webp" data-asset="keranjang" alt="keranjang" draggable="false">
         </div>
         <video class="zb-cat-src" src="kucing.webm" autoplay loop muted playsinline
                preload="auto" disablepictureinpicture></video>
@@ -206,19 +205,32 @@
           <span class="zb-cs" style="right:20px;top:22px;font-size:13px;animation-delay:.6s">✦</span>
           <span class="zb-cs" style="left:26px;bottom:60px;font-size:14px;animation-delay:1.1s">✦</span>
           <span class="zb-cs" style="right:24px;bottom:52px;font-size:16px;animation-delay:1.5s">✦</span>
-          <img class="zb-hasil" src="hasil-nobg.webp" alt="hasil buket" draggable="false">
+          <img class="zb-hasil" src="hasil-nobg.webp" data-asset="hasil-nobg" alt="hasil buket" draggable="false">
           <p class="zb-yey">yeyy kamu sudah mengumpulkan nya</p>
           <button class="zb-ok" type="button">iya</button>
         </div>
       </div>`;
     document.body.appendChild(overlay);
 
+    // background papan: pilih desktop/mobile & resolve ke format yg ADA
+    // (webp/png/jpg/jpeg) — jadi ganti format file tak perlu ubah kode.
+    (function setBasketBg(){
+      const apply=()=>{
+        const name=matchMedia('(max-width:768px)').matches ? 'handphone' : 'dekstop';
+        if(window.ZaiAsset) ZaiAsset.bg(overlay, name);
+        else overlay.style.backgroundImage=`url("${name}.webp")`;
+      };
+      apply();
+      const mq=matchMedia('(max-width:768px)');
+      (mq.addEventListener?mq.addEventListener('change',apply):mq.addListener(apply));
+    })();
+
     basketEl=overlay.querySelector('.zb-basket-wrap');
     const tray=overlay.querySelector('.zb-tray');
     GIFTS.forEach(g=>{
       const cell=document.createElement('div');
       cell.className='zb-cell wiggle'; cell.dataset.id=g.id;
-      cell.innerHTML=`<img src="${g.src}" alt="${g.label}" draggable="false">`;
+      cell.innerHTML=`<img src="${g.src}" data-asset="${(window.ZaiAsset?ZaiAsset.base(g.src):g.src)}" alt="${g.label}" draggable="false">`;
       attachDrag(cell,g);
       tray.appendChild(cell);
     });

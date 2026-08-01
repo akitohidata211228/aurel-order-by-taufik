@@ -1293,6 +1293,25 @@ Aku sayang kamu. 💖
 
 — From kakak`;
 
+// resolver aset amplop: cari format yg ADA (webp/png/jpg/jpeg)
+const SURAT_EXTS = ['webp','png','jpg','jpeg'];
+const _suratCache = {};
+function suratCandidates(name){ const b = String(name).replace(/\.(webp|png|jpe?g)$/i,''); return SURAT_EXTS.map(e => b + '.' + e); }
+function suratResolve(name){
+  const b = String(name).replace(/\.(webp|png|jpe?g)$/i,'');
+  if (_suratCache[b]) return _suratCache[b];
+  const list = suratCandidates(name);
+  const p = (function next(i){
+    if (i >= list.length) return Promise.resolve(list[0]);
+    return fetch(list[i], { method:'HEAD' }).then(r => (r && r.ok) ? list[i] : next(i+1)).catch(() => next(i+1));
+  })(0);
+  _suratCache[b] = p; return p;
+}
+function suratAttachFallback(img, name){
+  const list = suratCandidates(name); let i = 0;
+  img.addEventListener('error', function onErr(){ i++; if (i < list.length) img.src = list[i]; else img.removeEventListener('error', onErr); });
+}
+
 let suratBuilt = false, suratOpened = false;
 function buildSurat() {
   if (suratBuilt) return; suratBuilt = true;
@@ -1335,6 +1354,10 @@ function buildSurat() {
 
   const env = ov.querySelector('.su-env');
   const hint = ov.querySelector('.su-hint');
+  // amplop tutup/buka: resolve ke format yg ADA (webp/png/jpg/jpeg) &
+  // pasang fallback bila format berubah — jadi ganti file tak perlu ubah kode.
+  suratResolve('tutup').then(u => { env.src = u; });
+  suratAttachFallback(env, 'tutup');
 
   function showLetter() {
     env.style.opacity = '0'; env.style.transform = 'scale(1.2)';
@@ -1350,11 +1373,12 @@ function buildSurat() {
     }, 380);
   }
 
-  // klik amplop tertutup → tampilkan buka.webp dulu, lalu isi surat
+  // klik amplop tertutup → tampilkan gambar "buka" dulu, lalu isi surat
   env.addEventListener('click', () => {
     if (env.dataset.opened) return;
     env.dataset.opened = '1';
-    env.src = 'buka.webp';
+    suratResolve('buka').then(u => { env.src = u; });
+    suratAttachFallback(env, 'buka');
     hint.textContent = '💌';
     setTimeout(showLetter, 650);
   });
@@ -1375,7 +1399,7 @@ function closeSurat() {
   setTimeout(() => {
     const card = s.ov.querySelector('.su-card'); if (card) card.remove();
     s.env.style.display = ''; s.env.style.opacity = ''; s.env.style.transform = '';
-    s.env.src = 'tutup.webp'; delete s.env.dataset.opened;
+    suratResolve('tutup').then(u => { s.env.src = u; }); delete s.env.dataset.opened;
     s.hint.style.display = ''; s.hint.textContent = 'ketuk amplop untuk membuka ✨';
   }, 420);
 }

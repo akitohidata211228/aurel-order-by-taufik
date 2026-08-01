@@ -16,10 +16,10 @@
      asm  = papan kayu ATAS  → tempat menyusun HATI
      tray = papan kayu BAWAH → rak tempat potongan menunggu. */
   const LAYOUTS = {
-    mobile : { img:'back2-hp.webp',
+    mobile : { img:'back2-hp',
                asm :{xf:0.498, yf:0.383, wf:0.685, hf:0.362},
                tray:{xf:0.498, yf:0.698, wf:0.674, hf:0.122} },
-    desktop: { img:'back2-deks.webp',
+    desktop: { img:'back2-deks',
                asm :{xf:0.496, yf:0.396, wf:0.376, hf:0.430},
                tray:{xf:0.500, yf:0.757, wf:0.370, hf:0.094} }
   };
@@ -142,7 +142,10 @@
   /* =========================================================
      BAGIAN 2 — PAPAN (page 2) + GAME MENATA LOVE
      ========================================================= */
-  const NAT={ 'back2-hp.webp':[852,1846], 'back2-deks.webp':[1536,1024] };
+  /* ukuran natural gambar papan — pakai KEY tanpa ekstensi supaya cocok
+     apapun format filenya (webp/png/jpg). */
+  const NAT={ 'back2-hp':[852,1846], 'back2-deks':[1536,1024] };
+  const natOf=(name)=> NAT[(window.ZaiAsset?ZaiAsset.base(name):String(name).replace(/\.(webp|png|jpe?g)$/i,''))];
   let boardEl=null, cv=null, ctx=null, LAY=null, pieces=[], H0={}, dragging=null;
   let dpr=1, W=0, Hh=0;
 
@@ -184,7 +187,9 @@
     injectBoardCss();
     LAY=pickLayout();
     boardEl=document.createElement('div'); boardEl.id='zai-page2';
-    boardEl.style.backgroundImage=`url("${LAY.img}")`;
+    // background papan: resolve ke format yg ADA (webp/png/jpg/jpeg)
+    if(window.ZaiAsset) ZaiAsset.bg(boardEl, LAY.img);
+    else boardEl.style.backgroundImage=`url("${LAY.img}.webp")`;
     boardEl.innerHTML=`
       <div class="zp-title">Kumpulkan cintaku kepadamu 💖</div>
       <canvas class="zp-cv"></canvas>
@@ -208,7 +213,7 @@
 
   /* transform object-fit:cover -> px layar */
   function coverMap(){
-    const [iw,ih]=NAT[LAY.img]||[W,Hh];
+    const [iw,ih]=natOf(LAY.img)||[W,Hh];
     const scale=Math.max(W/iw, Hh/ih);
     const dw=iw*scale, dh=ih*scale;
     return {ox:(W-dw)/2, oy:(Hh-dh)/2, dw, dh, scale};

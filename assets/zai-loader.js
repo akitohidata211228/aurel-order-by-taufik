@@ -173,7 +173,12 @@
     const stage=box.querySelector('.zg-stage');
     if(stage) stage.classList.add('zg-open');    // animasi tutup terbuka
     const gimg=box.querySelector('.zg-img');
-    if(gimg) gimg.src='kotak-buka.webp';          // ganti ke gambar kotak terbuka
+    if(gimg){
+      // ganti ke gambar kotak terbuka — resolve ke format yg ADA (webp/png/jpg)
+      if(window.ZaiAsset){ gimg.setAttribute('data-asset','kotak-buka');
+        ZaiAsset.resolve('kotak-buka').then(url=>{ gimg.src=url; }); }
+      else gimg.src='kotak-buka.webp';
+    }
     let origin={x:innerWidth/2,y:innerHeight/2};
     try{ const r=(stage||box).getBoundingClientRect(); origin={x:r.left+r.width/2,y:r.top+r.height*0.35}; }catch(_){}
     // beri jeda kecil supaya animasi buka terlihat sebelum bunga menyembur
@@ -196,18 +201,24 @@
     const G = window.__zg;
     const bgD = (G && G.cget) ? G.cget('bgDesktop','dekstop.webp') : 'dekstop.webp';
     const bgM = (G && G.cget) ? G.cget('bgMobile','handphone.webp') : 'handphone.webp';
-    const st=document.createElement('style'); st.id='zai-final-bg';
-    st.textContent=
-      '#root .bg-\\[\\#0d0015\\],'+
-      'body.zai-final .bg-\\[\\#0d0015\\]{'+
-      'background-color:transparent!important;'+
-      'background-image:url("'+bgD+'")!important;'+
-      'background-size:cover!important;background-position:center!important;'+
-      'background-attachment:fixed!important;background-repeat:no-repeat!important;}'+
-      '@media (max-width:768px){'+
-      '#root .bg-\\[\\#0d0015\\],body.zai-final .bg-\\[\\#0d0015\\]{'+
-      'background-image:url("'+bgM+'")!important;background-attachment:scroll!important;}}';
-    document.head.appendChild(st);
+    // resolve tiap nama ke format yg BENAR-BENAR ada (webp/png/jpg/jpeg),
+    // supaya ganti format file tak perlu ubah kode.
+    const R = (name)=> (window.ZaiAsset ? ZaiAsset.resolve(name) : Promise.resolve(name));
+    Promise.all([R(bgD), R(bgM)]).then(([urlD, urlM])=>{
+      if(document.getElementById('zai-final-bg'))return;
+      const st=document.createElement('style'); st.id='zai-final-bg';
+      st.textContent=
+        '#root .bg-\\[\\#0d0015\\],'+
+        'body.zai-final .bg-\\[\\#0d0015\\]{'+
+        'background-color:transparent!important;'+
+        'background-image:url("'+urlD+'")!important;'+
+        'background-size:cover!important;background-position:center!important;'+
+        'background-attachment:fixed!important;background-repeat:no-repeat!important;}'+
+        '@media (max-width:768px){'+
+        '#root .bg-\\[\\#0d0015\\],body.zai-final .bg-\\[\\#0d0015\\]{'+
+        'background-image:url("'+urlM+'")!important;background-attachment:scroll!important;}}';
+      document.head.appendChild(st);
+    });
     document.body.classList.add('zai-final');
     // tampilkan mini-game keranjang di halaman background bunga
     setTimeout(()=>{ window.ZaiBasket && window.ZaiBasket.start(); }, 700);
@@ -228,7 +239,7 @@
         <span class="zg-spark" style="right:8%;top:26%;font-size:12px;animation-delay:.9s">✦</span>
         <span class="zg-spark" style="left:20%;bottom:26%;font-size:14px;animation-delay:1.6s">✦</span>
         <span class="zg-spark" style="right:16%;bottom:30%;font-size:10px;animation-delay:2.3s">✦</span>
-        <img class="zg-img" src="kotak-tutup.webp" alt="kado" draggable="false">
+        <img class="zg-img" src="kotak-tutup.webp" data-asset="kotak-tutup" alt="kado" draggable="false">
       </div>
       <div class="zg-hint">buka kotaknya, maka…</div>`;
     btn.appendChild(wrap);

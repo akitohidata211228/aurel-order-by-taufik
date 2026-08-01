@@ -59,11 +59,20 @@
 
   /* ---------- sprite MODE 'mixed' (foto asli): biru, kuning, coklat, hati ----------
      dipakai untuk animasi FINALE full-layar (semua elemen KECUALI keranjang). */
-  const MIXED_SRC=['biru.webp','kuning.webp','coklat.webp','love.webp'];
+  const MIXED_SRC=['biru','kuning','coklat','love'];  // tanpa ekstensi → resolver pilih format yg ada
   const MIXED_COUNT=MIXED_SRC.length;
   let mixedSprites=null;
   function buildMixedSprites(){ if(mixedSprites)return mixedSprites;
-    mixedSprites=MIXED_SRC.map(src=>{const im=new Image();im.src=src;return im;});
+    mixedSprites=MIXED_SRC.map(name=>{
+      const im=new Image();
+      if(window.ZaiAsset){
+        // pasang fallback berantai dulu, lalu set src ke kandidat teratas
+        ZaiAsset.img(im, name);
+        // pastikan URL final (yg BENAR-BENAR ada) dipakai bila beda ekstensi
+        ZaiAsset.resolve(name).then(url=>{ if(im.src.indexOf(url)===-1) im.src=url; });
+      } else { im.src=name+'.webp'; }
+      return im;
+    });
     return mixedSprites; }
 
   /* ---------- canvas ---------- */
