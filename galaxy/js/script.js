@@ -87,21 +87,20 @@ const textureLoader = new THREE.TextureLoader();
 const MAX_IMAGES = 30;
 const IMG_EXTS = ['webp', 'png', 'jpg', 'jpeg'];
 function probeImages() {
-  // untuk tiap nomor, cari file pertama yang ADA di antara ekstensi di atas.
+  // Cek keberadaan file pakai HEAD request (hanya header, TANPA mengunduh isi
+  // gambar). Penting: foto besar (mis. PNG puluhan MB) tak lagi ikut diunduh
+  // cuma untuk "mengecek ada/tidak" — isi gambar baru diunduh saat benar-benar
+  // dipakai di buildImageGroups. Semua nomor & ekstensi diprobe paralel.
+  const exists = (url) =>
+    fetch(url, { method: 'HEAD' })
+      .then(r => (r && r.ok) ? url : null)
+      .catch(() => null);
+  // untuk tiap nomor: uji semua ekstensi paralel, ambil yang pertama ketemu
+  // (urutan preferensi tetap: webp → png → jpg → jpeg).
+  const findForNum = (n) =>
+    Promise.all(IMG_EXTS.map(ext => exists(`image${n}.${ext}`)))
+      .then(hits => hits.find(Boolean) || null);
   const nums = Array.from({ length: MAX_IMAGES }, (_, i) => i + 1);
-  const tryOne = (src) => new Promise(resolve => {
-    const im = new window.Image();
-    im.onload = () => resolve(src);
-    im.onerror = () => resolve(null);
-    im.src = src;
-  });
-  const findForNum = async (n) => {
-    for (const ext of IMG_EXTS) {
-      const hit = await tryOne(`image${n}.${ext}`);
-      if (hit) return hit;
-    }
-    return null;
-  };
   // jaga urutan (image1, image2, ...) & buang nomor yang tak ada file-nya
   return Promise.all(nums.map(findForNum)).then(list => list.filter(Boolean));
 }
@@ -1278,7 +1277,9 @@ function requestFullScreen() {
    SURAT — klik planet (setelah intro) → amplop tertutup (tutup.webp),
    klik amplop → terbuka (buka.webp) → isi surat + tombol silang (X).
    ========================================================= */
-const SURAT_TEXT = `Untuk Zai tersayang,
+const SURAT_TEXT = `Dear keyy,
+
+Tetep semangat yaaa, jangan pernah putus asaaa, walaupun dunia ga selalu berpihak ke kamu tapi kamu gausah khawatir okeee, selalu ada aku yang bisa jadi tempat bersandar buat kamuu, jadi tetap semangat yaaaa
 
 Setiap kali aku memikirkanmu, dunia terasa lebih hangat.
 Senyummu adalah bintang paling terang di galaksiku,
@@ -1289,7 +1290,8 @@ untuk mengingatkan bahwa kamu dicintai,
 bukan cuma hari ini, tapi selamanya.
 
 Aku sayang kamu. 💖
-— Taufik`;
+
+— From kakak`;
 
 let suratBuilt = false, suratOpened = false;
 function buildSurat() {
@@ -1389,26 +1391,39 @@ function onCanvasClick(event) {
 
   if (!introStarted) {
     // klik pertama planet → mulai intro (zoom kamera + audio)
-    requestFullScreen();
-    introStarted = true;
-    fadeInProgress = true;
-    document.body.classList.add("intro-started");
-    playGalaxyAudio();
-
-    startCameraAnimation();
-
-    if (starField && starField.geometry) {
-      starField.geometry.setDrawRange(0, originalStarCount);
-    }
+    startIntro();
   } else {
     // klik planet setelah intro → buka SURAT
     openSurat();
   }
 }
 
+/* Mulai intro: zoom kamera masuk galaxy + audio. Bisa dipicu otomatis
+   saat galaxy dibuka, atau lewat klik planet sebagai fallback. */
+function startIntro() {
+  if (introStarted) return;
+  introStarted = true;
+  fadeInProgress = true;
+  document.body.classList.add("intro-started");
+  // fullscreen hanya berhasil bila dipicu gestur user; abaikan bila diblokir
+  try { requestFullScreen(); } catch (_) {}
+  playGalaxyAudio();
+
+  startCameraAnimation();
+
+  if (starField && starField.geometry) {
+    starField.geometry.setDrawRange(0, originalStarCount);
+  }
+}
+
 renderer.domElement.addEventListener("click", onCanvasClick);
 
 animate();
+
+// Buka galaxy → LANGSUNG animasi zoom (tanpa perlu klik planet dulu).
+// Jeda kecil supaya galaxy sempat ter-render mulus sebelum kamera menukik.
+setTimeout(startIntro, 600);
+
 
 planet.name = 'main-planet';
 centralGlow.name = 'main-glow';
