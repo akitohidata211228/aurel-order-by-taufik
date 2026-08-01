@@ -239,6 +239,11 @@
     if(!vid||!cv) return;
     const cx=cv.getContext('2d',{willReadFrequently:true});
     let raf=0, keyed=false, key={r:0,g:0,b:0};
+    // proses chroma-key DIBATASI ~15fps + resolusi kecil supaya ringan
+    // (loop 60fps + getImageData sepenuh-frame bikin drag terasa berat)
+    const MAXW=180;               // lebar maksimum buffer proses
+    const INTERVAL=66;            // ms antar-frame (≈15fps)
+    let lastT=-1;
 
     // pastikan selalu mengulang walau 'loop' diabaikan browser
     vid.addEventListener('ended',()=>{ vid.currentTime=0; vid.play().catch(()=>{}); });
@@ -252,10 +257,15 @@
       for(const [x,y] of pts){ const d=cx.getImageData(x,y,1,1).data; r+=d[0];g+=d[1];b+=d[2]; }
       key={r:r/4,g:g/4,b:b/4}; keyed=true;
     }
-    function draw(){
-      const w=vid.videoWidth, h=vid.videoHeight;
-      if(w&&h){
-        if(cv.width!==w){ cv.width=w; cv.height=h; }
+    function draw(now){
+      raf=requestAnimationFrame(draw);
+      if(lastT>=0 && now-lastT<INTERVAL) return;   // lewati frame → hemat CPU
+      lastT=now;
+      const vw=vid.videoWidth, vh=vid.videoHeight;
+      if(vw&&vh){
+        const scale=Math.min(1, MAXW/vw);
+        const w=Math.max(1,Math.round(vw*scale)), h=Math.max(1,Math.round(vh*scale));
+        if(cv.width!==w){ cv.width=w; cv.height=h; keyed=false; }
         cx.drawImage(vid,0,0,w,h);
         try{
           const img=cx.getImageData(0,0,w,h), p=img.data;
@@ -272,7 +282,6 @@
           cancelAnimationFrame(raf); return;
         }
       }
-      raf=requestAnimationFrame(draw);
     }
     raf=requestAnimationFrame(draw);
   }
