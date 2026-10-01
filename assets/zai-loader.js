@@ -132,7 +132,7 @@
     const caret=o.querySelector('.zl-caret');
     const fill=o.querySelector('.zl-fill');
     const heart=o.querySelector('.zl-heart');
-    const TEXT='Happy girlfriend by rama';
+    const TEXT='Happy girlfriend by Taufik';
     let i=0;
     // ketik satu huruf demi satu huruf; progress bar sinkron
     (function type(){

@@ -1277,7 +1277,7 @@ function requestFullScreen() {
    SURAT — klik planet (setelah intro) → amplop tertutup (tutup.webp),
    klik amplop → terbuka (buka.webp) → isi surat + tombol silang (X).
    ========================================================= */
-const SURAT_TEXT = `Dear keyy,
+const SURAT_TEXT = `Dear Aurel,
 
 Tetep semangat yaaa, jangan pernah putus asaaa, walaupun dunia ga selalu berpihak ke kamu tapi kamu gausah khawatir okeee, selalu ada aku yang bisa jadi tempat bersandar buat kamuu, jadi tetap semangat yaaaa
 
@@ -1291,7 +1291,7 @@ bukan cuma hari ini, tapi selamanya.
 
 Aku sayang kamu. 💖
 
-— From kakak`;
+— From Taufik`;
 
 // resolver aset amplop: cari format yg ADA (webp/png/jpg/jpeg)
 const SURAT_EXTS = ['webp','png','jpg','jpeg'];
